@@ -148,7 +148,7 @@ class MerklePatriciaTreeIntegrationSuite extends FunSuite
     }
   }
 
-  ignore("MPT benchmark") {
+  test("MPT benchmark") {
     withNodeStorage { ns =>
       val hashFn = crypto.kec256(_: Array[Byte])
 

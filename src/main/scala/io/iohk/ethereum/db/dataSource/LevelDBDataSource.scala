@@ -2,7 +2,7 @@ package io.iohk.ethereum.db.dataSource
 
 import java.io.File
 
-import io.iohk.ethereum.utils.Config
+import io.iohk.ethereum.utils.{Config, Logger}
 import org.iq80.leveldb.{DB, Options, WriteOptions}
 import org.iq80.leveldb.impl.{Iq80DBFactory, WriteBatchImpl}
 
@@ -74,7 +74,7 @@ trait LevelDbConfig {
   val path: String
 }
 
-object LevelDBDataSource {
+object LevelDBDataSource extends Logger {
 
   private def createDB(levelDbConfig: LevelDbConfig): DB = {
     import levelDbConfig._
@@ -83,6 +83,9 @@ object LevelDBDataSource {
       .createIfMissing(createIfMissing)
       .paranoidChecks(paranoidChecks) // raise an error as soon as it detects an internal corruption
       .verifyChecksums(verifyChecksums) // force checksum verification of all data that is read from the file system on behalf of a particular read
+      .logger(new org.iq80.leveldb.Logger {
+        override def log(s: String): Unit = LevelDBDataSource.this.log.info(s)
+      })
 
     Iq80DBFactory.factory.open(new File(path), options)
   }
